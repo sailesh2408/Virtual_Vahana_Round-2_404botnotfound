@@ -1,0 +1,8 @@
+carla==0.9.16
+opencv-python
+numpy
+ultralytics
+torch
+torchvision
+simple-pid
+scipy

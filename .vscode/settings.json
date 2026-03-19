@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./models/ufld",
+        "../CARLA_0.9.16/PythonAPI/carla"
+    ]
+}
