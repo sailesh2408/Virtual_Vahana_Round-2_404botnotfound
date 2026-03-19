@@ -1,8 +1,7 @@
-carla==0.9.16
-opencv-python
 numpy
-ultralytics
+opencv-python
 torch
 torchvision
+ultralytics
 simple-pid
-scipy
+Pillow
