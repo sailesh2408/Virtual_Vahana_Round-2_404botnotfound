@@ -185,8 +185,7 @@ simple-pid
 
 ---
 
-## 📊 Highlights (Why This Stands Out)
-
+## 📊 Highlights 
 ✅ True **Camera-LiDAR Fusion**  
 ✅ Real-time **AEB with fallback logic**  
 ✅ Hybrid **V2X + Vision compliance**  
