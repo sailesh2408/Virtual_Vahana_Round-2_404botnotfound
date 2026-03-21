@@ -13,6 +13,17 @@
   <img src="https://img.shields.io/badge/Status-Production_Ready-success?style=for-the-badge"/>
 </p>
 
+<p align="center">
+  <a href="[Demo Video](https://youtu.be/7FWkwuvbBSk?si=pYO2d8YBfAZOUbP-)">
+    <img src="https://img.shields.io/badge/Watch-Demo_Video-red?style=for-the-badge&logo=youtube"/>
+  </a>
+  <a href="YOUR_TECHNICAL_REPORT_LINK">
+    <img src="https://img.shields.io/badge/Read-Technical_Report-blue?style=for-the-badge&logo=readthedocs"/>
+  </a>
+  <a href="[Explanation Video](https://youtu.be/kqOzSTb72sk)">
+    <img src="https://img.shields.io/badge/Watch-Explanation_Video-purple?style=for-the-badge&logo=google-drive"/>
+  </a>
+</p>
 ---
 
 ## 🧭 Overview
@@ -89,45 +100,9 @@ Everything runs at a sustained **20 FPS** on a mid-range GPU.
 
 ## 🧠 System Architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                     SENSOR SUITE                        │
-│  Center Cam │ Left Cam │ Right Cam │ Rear Cam │ LiDAR   │
-│            AI Vision Cam (16:9, 1280×720)               │
-└────────────────────────┬────────────────────────────────┘
-                         ↓
-┌────────────────────────────────────────────────────────┐
-│                   PERCEPTION MODULE                    │
-│   YOLOv8s (object detection) + YOLOP (lanes/area)     │
-│   Crosswalk Eraser (morphological filtering)          │
-└────────────────────────┬───────────────────────────────┘
-                         ↓
-┌────────────────────────────────────────────────────────┐
-│                  SENSOR FUSION MODULE                  │
-│   LiDAR → Camera projection (Pinhole Model)           │
-│   Z-axis leg filter │ Per-detection depth annotation  │
-└────────────────────────┬───────────────────────────────┘
-                         ↓
-┌────────────────────────────────────────────────────────┐
-│             SAFETY & V2X ARBITRATION LAYER             │
-│   Dynamic Panic Bubble │ AEB Hold │ Vision Fallback   │
-│   V2X Traffic Light │ Stop Sign Hold │ LiDAR Net      │
-└──────────┬─────────────────────────────┬───────────────┘
-           ↓                             ↓
-    aeb_trigger=True            overtake_requested=True
-           ↓                             ↓
-┌──────────────────────────────────────────────────────┐
-│                  PLANNING LAYER                      │
-│  Global: A* routing (2m resolution) + minimap       │
-│  Local:  Frenet spline │ Overtake │ Parking         │
-└────────────────────────┬─────────────────────────────┘
-                         ↓
-┌────────────────────────────────────────────────────┐
-│                  CONTROL MODULE                    │
-│   Stanley (lateral) │ PID (longitudinal)          │
-│   → throttle / brake / steer → CARLA vehicle      │
-└────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="architecture.jpeg" alt="Virtual Vahana System Architecture" width="1000"/>
+</p>
 
 ---
 
@@ -311,6 +286,45 @@ simple-pid         # PID longitudinal controller
 
 ---
 
+## 🎥 Project Deliverables
+
+### 📹 Demo Video
+A complete demonstration of the Virtual Vahana ADAS stack in CARLA, showcasing:
+- Autonomous lane following
+- Pedestrian detection and emergency braking
+- Traffic light and stop sign compliance
+- Safe overtaking
+- Automatic parking
+- HMI visualisation
+
+> 🔗 **Demo Video Link:** [Watch here](https://youtu.be/7FWkwuvbBSk?si=Ew0DsobEqoeNQvz_)
+
+---
+
+### 📄 Technical Report
+A detailed technical report covering:
+- System architecture
+- Module-wise design
+- Perception and sensor fusion pipeline
+- Safety logic and risk prediction
+- Planning and control algorithms
+- Experimental observations
+- Competition rubric mapping
+
+> 🔗 **Technical Report Link:** _Add your PDF link here_
+
+---
+
+### 🎙️ Explanation Video
+A technical walkthrough explaining:
+- Overall system pipeline
+- Key innovations (LiDAR-camera fusion, panic bubble, V2X)
+- Algorithm choices (YOLOv8, YOLOP, Stanley, PID, Frenet)
+- Safety and robustness mechanisms
+- Team contributions and implementation strategy
+
+> 🔗 **Explanation Video Link:** [_Watch me ](https://youtu.be/kqOzSTb72sk)
+
 ## 📊 Competition Rubric Coverage
 
 | Rubric Category | Points | Implementation |
@@ -350,14 +364,17 @@ simple-pid         # PID longitudinal controller
 
 ---
 
-## 👨‍💻 Team
+## 👨‍💻 Meet the Team
 
-**404botnotfound** — Amrita Vishwa Vidyapeetham, Kollam, Kerala
+**Team 404botnotfound**  
+**Amrita Vishwa Vidyapeetham, Kollam, Kerala**
 
-> Y Sai Sailesh Reddy · Bhavana PH · Sidharth R Krishna
+### Members
+- **Bhavana PH**
+- **Y SsAILESH Yampati Reddy**
+- **Sidharth R Krishna**
 
 > *Built with precision, performance, and a bit of madness 🚀*
-
 ---
 
 ## ⭐ Final Note
