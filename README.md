@@ -368,7 +368,7 @@ A technical walkthrough explaining:
 
 ### Members
 - **Bhavana PH**
-- **Y Sailesh Yampati Reddy**
+- **Y Sai Sailesh Reddy**
 - **Sidharth R Krishna**
 
 > *Built with precision, performance, and a bit of madness 🚀*
