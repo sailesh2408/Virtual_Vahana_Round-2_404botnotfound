@@ -17,22 +17,21 @@
   <a href="[Demo Video](https://youtu.be/7FWkwuvbBSk?si=pYO2d8YBfAZOUbP-)">
     <img src="https://img.shields.io/badge/Watch-Demo_Video-red?style=for-the-badge&logo=youtube"/>
   </a>
-  <a href="YOUR_TECHNICAL_REPORT_LINK">
+  <a href="Virtual_vahana_round2_techinalReport.pdf">
     <img src="https://img.shields.io/badge/Read-Technical_Report-blue?style=for-the-badge&logo=readthedocs"/>
   </a>
   <a href="[Explanation Video](https://youtu.be/kqOzSTb72sk)">
     <img src="https://img.shields.io/badge/Watch-Explanation_Video-purple?style=for-the-badge&logo=google-drive"/>
   </a>
 </p>
----
 
-## 🧭 Overview
+## Overview
 
 **Virtual Vahana** is a modular, high-performance **ADAS + Semi-Autonomous Driving system** built inside the **CARLA 0.9.16 Simulator**. The vehicle drives entirely on its own — no keyboard input, no gamepad — making every decision from lane following to emergency braking using live sensor data processed through a clean, professional pipeline.
 
 The system implements a strict, unidirectional:
 
-> 🧠 **Perception → Fusion → Safety → Planning → Control**
+> **Perception → Fusion → Safety → Planning → Control**
 
 pipeline across **8 specialised modules**, with **Camera-LiDAR sensor fusion**, **physics-based risk prediction**, **V2X-assisted traffic compliance**, and **Frenet trajectory planning** — bridging the gap between traditional ADAS and full autonomy.
 
@@ -52,53 +51,53 @@ Everything runs at a sustained **20 FPS** on a mid-range GPU.
 ## ✨ Key Features
 
 ### 👁️ Perception Stack
-- ⚡ **YOLOv8s** — Real-time object detection at 40%+ confidence across 10 classes: pedestrians, cars, trucks, buses, motorcycles, bicycles, traffic lights, stop signs, fire hydrants, and benches
-- 🛣️ **YOLOP** — Panoptic driving perception: simultaneous drivable area segmentation (green overlay) + lane line detection (magenta overlay) from a single neural network pass
-- 🧹 **Crosswalk Eraser** — Custom morphological filter (vertical 9×2 kernel) that mathematically destroys horizontal crosswalk stripes from the lane mask while preserving vertical lane lines — eliminating intersection steering errors
-- 🎯 Dual-camera strategy: center camera for object detection, dedicated 16:9 AI Vision camera for lane segmentation (matching dashcam training geometry)
+- **YOLOv8s** — Real-time object detection at 40%+ confidence across 10 classes: pedestrians, cars, trucks, buses, motorcycles, bicycles, traffic lights, stop signs, fire hydrants, and benches
+- **YOLOP** — Panoptic driving perception: simultaneous drivable area segmentation (green overlay) + lane line detection (magenta overlay) from a single neural network pass
+- **Crosswalk Eraser** — Custom morphological filter (vertical 9×2 kernel) that mathematically destroys horizontal crosswalk stripes from the lane mask while preserving vertical lane lines — eliminating intersection steering errors
+- Dual-camera strategy: center camera for object detection, dedicated 16:9 AI Vision camera for lane segmentation (matching dashcam training geometry)
 
 ### 🔗 Sensor Fusion (Innovation Feature ✅)
-- 📡 **32-channel LiDAR → Camera Projection** using the Pinhole Camera Model
-- 🧮 Focal length derived from FOV: `f = 800 / (2 × tan(45°)) = 400px`
-- 📐 3D point `(X, Y, Z)` projected to pixel `(u, v)`: `u = f·Y/X + cx`, `v = f·(−Z)/X + cy`
-- 🦵 **Z-axis Leg Filter**: keeps only points between −2.2m and +1.0m — discards ground plane (−2.4m) while capturing pedestrian feet (−1.8m to −2.0m) for detection even under torso occlusion
-- 📍 After fusion, every detection carries exact **obj_x** (forward metres) and **obj_y** (lateral metres) — the ground truth used by every downstream module
+- **32-channel LiDAR → Camera Projection** using the Pinhole Camera Model
+- Focal length derived from FOV: `f = 800 / (2 × tan(45°)) = 400px`
+- 3D point `(X, Y, Z)` projected to pixel `(u, v)`: `u = f·Y/X + cx`, `v = f·(−Z)/X + cy`
+- **Z-axis Leg Filter**: keeps only points between −2.2m and +1.0m — discards ground plane (−2.4m) while capturing pedestrian feet (−1.8m to −2.0m) for detection even under torso occlusion
+- After fusion, every detection carries exact **obj_x** (forward metres) and **obj_y** (lateral metres) — the ground truth used by every downstream module
 
 ### 🛑 Active Safety System
-- 🚨 **Dynamic Panic Bubble** — minimum safe distance scales quadratically with speed: `D = max(4.5, 4.5 + v×0.5 + v²/8)` — at 30 km/h this is 17.4m (~2.1 seconds), providing the 3–5 second risk prediction window required by the rubric
-- 🔒 **AEB Hold** — emergency stop held for 15 frames (~0.75s) after pedestrian detection, handling neural network flicker between frames
-- 👀 **Lateral Constraint** — AEB only triggers for pedestrians within ±1.5m laterally, preventing phantom braking for people safely on the pavement
-- 🧠 **Vision-Only Fallback** — if LiDAR misses an occluded pedestrian, AEB triggers on bounding box size (>100px height) + centre-column position alone
-- 🔁 **LiDAR Safety Net** — independent raw point cloud scan of the forward corridor, AEB triggers on >15 points regardless of object detection output
-- 🅿️ **Parking Mode** — tightens safety corridor to chassis width (±0.85m) and raises Z-floor to −1.5m when pulling over, preventing false triggers from kerbs and street furniture
+- **Dynamic Panic Bubble** — minimum safe distance scales quadratically with speed: `D = max(4.5, 4.5 + v×0.5 + v²/8)` — at 30 km/h this is 17.4m (~2.1 seconds), providing the 3–5 second risk prediction window required by the rubric
+- **AEB Hold** — emergency stop held for 15 frames (~0.75s) after pedestrian detection, handling neural network flicker between frames
+- **Lateral Constraint** — AEB only triggers for pedestrians within ±1.5m laterally, preventing phantom braking for people safely on the pavement
+- **Vision-Only Fallback** — if LiDAR misses an occluded pedestrian, AEB triggers on bounding box size (>100px height) + centre-column position alone
+- **LiDAR Safety Net** — independent raw point cloud scan of the forward corridor, AEB triggers on >15 points regardless of object detection output
+- **Parking Mode** — tightens safety corridor to chassis width (±0.85m) and raises Z-floor to −1.5m when pulling over, preventing false triggers from kerbs and street furniture
 
 ### 🌐 V2X Traffic Compliance
-- 🚦 **Traffic Lights** — queries CARLA's infrastructure API directly (`is_at_traffic_light()` + `get_traffic_light_state()`), simulating IEEE 802.11p V2I wireless protocols — eliminates all pixel-level ambiguity of rendering compressed signals at 40+ metres
-- 🛑 **Stop Signs** — vision detects the sign; bounding box area >3500px² confirms proximity (8–12m); mandatory **60-frame (3-second) complete halt** enforced; 100-frame ignore window prevents re-trigger as vehicle clears the intersection
-- 🏎️ **Speed Limits** — cruise speed enforced from CARLA map data, updated dynamically per road segment
+- **Traffic Lights** — queries CARLA's infrastructure API directly (`is_at_traffic_light()` + `get_traffic_light_state()`), simulating IEEE 802.11p V2I wireless protocols — eliminates all pixel-level ambiguity of rendering compressed signals at 40+ metres
+- **Stop Signs** — vision detects the sign; bounding box area >3500px² confirms proximity (8–12m); mandatory **60-frame (3-second) complete halt** enforced; 100-frame ignore window prevents re-trigger as vehicle clears the intersection
+- **Speed Limits** — cruise speed enforced from CARLA map data, updated dynamically per road segment
 
 ### 🗺️ Planning & Control
 
 #### Global Planning
-- 🧭 **A* pathfinding** on CARLA's road topology via `GlobalRoutePlanner`
-- 📍 **2-metre waypoint resolution** — smooth curvature handling through every bend
-- 🖱️ **Interactive minimap** — click anywhere to set or change destination mid-drive; route recalculates instantly
+- **A* pathfinding** on CARLA's road topology via `GlobalRoutePlanner`
+- **2-metre waypoint resolution** — smooth curvature handling through every bend
+- **Interactive minimap** — click anywhere to set or change destination mid-drive; route recalculates instantly
 
 #### Local Planning
-- 🛣️ **Frenet Trajectory Generation** — converts global route into per-frame vehicle-frame target coordinates `(forward_dist, lateral_dist)`
-- 📈 **10-point spline** projected forward each frame using quadratic lateral interpolation for smooth, human-like arc entry
-- 🔄 **Safe Same-Direction Overtaking** — checks: (1) adjacent lane is a Driving lane, (2) lane ID signs confirm same traffic direction, (3) LiDAR blindspot sweep clear — only then initiates a smooth 4.5-second exponential lateral shift of ±3.5m
-- ⏪ **Stuck Recovery** — if AEB holds and speed is near-zero for >20 frames, reverses at 5 km/h until a 15m forward gap is created
-- 🅿️ **Automatic Parking** — on route completion, traverses rightward through lane types until a Shoulder/Parking lane is found, builds a short parking route, and pulls in at 5–10 km/h
+- **Frenet Trajectory Generation** — converts global route into per-frame vehicle-frame target coordinates `(forward_dist, lateral_dist)`
+- **10-point spline** projected forward each frame using quadratic lateral interpolation for smooth, human-like arc entry
+- **Safe Same-Direction Overtaking** — checks: (1) adjacent lane is a Driving lane, (2) lane ID signs confirm same traffic direction, (3) LiDAR blindspot sweep clear — only then initiates a smooth 4.5-second exponential lateral shift of ±3.5m
+- **Stuck Recovery** — if AEB holds and speed is near-zero for >20 frames, reverses at 5 km/h until a 15m forward gap is created
+- **Automatic Parking** — on route completion, traverses rightward through lane types until a Shoulder/Parking lane is found, builds a short parking route, and pulls in at 5–10 km/h
 
 #### Control System
-- 🎯 **Stanley Kinematic Controller** (lateral) — corrects both heading error `ψe = atan2(x_target, z_target)` and cross-track error simultaneously: `δ = ψe + atan(k·ecte / (v + ksoft))` with `k=0.55`, `ksoft=1.0`
-- ⚙️ **PID Controller** (longitudinal) — `Kp=1.0, Ki=0.1, Kd=0.05` at 20Hz; PID is hard-reset on AEB to prevent integral windup causing throttle surge on release
-- 🔀 Positive output → throttle, negative → brake, split cleanly at zero with no deadband
+- **Stanley Kinematic Controller** (lateral) — corrects both heading error `ψe = atan2(x_target, z_target)` and cross-track error simultaneously: `δ = ψe + atan(k·ecte / (v + ksoft))` with `k=0.55`, `ksoft=1.0`
+- **PID Controller** (longitudinal) — `Kp=1.0, Ki=0.1, Kd=0.05` at 20Hz; PID is hard-reset on AEB to prevent integral windup causing throttle surge on release
+- Positive output → throttle, negative → brake, split cleanly at zero with no deadband
 
 ---
 
-## 🧠 System Architecture
+## System Architecture
 
 <p align="center">
   <img src="architecture.jpeg" alt="Virtual Vahana System Architecture" width="1000"/>
@@ -311,8 +310,7 @@ A detailed technical report covering:
 - Experimental observations
 - Competition rubric mapping
 
-> 🔗 **Technical Report Link:** _Add your PDF link here_
-
+> 📥 **[Download Technical Report (PDF)](Virtual_vahana_round2_techinalReport.pdf)**
 ---
 
 ### 🎙️ Explanation Video
@@ -323,22 +321,21 @@ A technical walkthrough explaining:
 - Safety and robustness mechanisms
 - Team contributions and implementation strategy
 
-> 🔗 **Explanation Video Link:** [_Watch me ](https://youtu.be/kqOzSTb72sk)
+> 🔗 **Explanation Video Link:** [Watch me ](https://youtu.be/kqOzSTb72sk)
 
 ## 📊 Competition Rubric Coverage
 
-| Rubric Category | Points | Implementation |
-|----------------|--------|----------------|
-| Autonomous Lane Following | 15 | YOLOP + crosswalk eraser + Stanley controller + Frenet spline |
-| Dynamic Obstacle Handling | 15 | Panic bubble + LiDAR fusion + overtake + reversing recovery |
-| Pedestrian Safety | 10 | Fused AEB + lateral constraint + hold frames + vision fallback |
-| Traffic Sign Compliance | 10 | V2X traffic lights + stop sign hold + speed limit enforcement |
-| System Stability & Safety | 10 | 20 FPS + modular pipeline + raw LiDAR safety net |
-| Architecture Clarity | 10 | 5-layer pipeline, 8 single-responsibility modules |
-| Algorithm Design | 10 | Pinhole fusion, Frenet planning, Stanley + PID control |
-| Innovation | 10 | ✅ Sensor Fusion + ✅ Risk Prediction (both criteria met) |
-| Dashboard / HMI | 10 | 6-widget glass-panel dashboard with real-time decision display |
-| **Total** | **100** | |
+| Rubric Category | Implementation |
+|----------------|----------------|
+| Autonomous Lane Following | YOLOP + crosswalk eraser + Stanley controller + Frenet spline |
+| Dynamic Obstacle Handling | Panic bubble + LiDAR fusion + overtake + reversing recovery |
+| Pedestrian Safety | Fused AEB + lateral constraint + hold frames + vision fallback |
+| Traffic Sign Compliance| V2X traffic lights + stop sign hold + speed limit enforcement |
+| System Stability & Safety | 20 FPS + modular pipeline + raw LiDAR safety net |
+| Architecture Clarity | 5-layer pipeline, 8 single-responsibility modules |
+| Algorithm Design | Pinhole fusion, Frenet planning, Stanley + PID control |
+| Innovation | Sensor Fusion + Risk Prediction (both criteria met) |
+| Dashboard / HMI | 6-widget glass-panel dashboard with real-time decision display |
 
 ---
 
@@ -355,12 +352,12 @@ A technical walkthrough explaining:
 
 ## 🏁 Future Improvements
 
-- 🔥 **Multi-agent prediction** using Graph Neural Networks for long-horizon traffic intent modelling
-- 🧠 **End-to-end imitation learning** integration alongside the modular stack
-- 🌍 **Real-world dataset adaptation** for KITTI / nuScenes / Waymo transfer
-- ⚡ **TensorRT inference optimisation** for embedded deployment
-- 🗺️ **HD Map integration** for lane-level localisation
-- 📡 **True DSRC/C-V2X simulation** with latency and packet loss modelling
+- **Multi-agent prediction** using Graph Neural Networks for long-horizon traffic intent modelling
+- **End-to-end imitation learning** integration alongside the modular stack
+- **Real-world dataset adaptation** for KITTI / nuScenes / Waymo transfer
+- **TensorRT inference optimisation** for embedded deployment
+- **HD Map integration** for lane-level localisation
+- **True DSRC/C-V2X simulation** with latency and packet loss modelling
 
 ---
 
@@ -371,7 +368,7 @@ A technical walkthrough explaining:
 
 ### Members
 - **Bhavana PH**
-- **Y SsAILESH Yampati Reddy**
+- **Y Sailesh Yampati Reddy**
 - **Sidharth R Krishna**
 
 > *Built with precision, performance, and a bit of madness 🚀*
