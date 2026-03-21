@@ -14,14 +14,14 @@
 </p>
 
 <p align="center">
-  <a href="[Demo Video](https://youtu.be/7FWkwuvbBSk?si=pYO2d8YBfAZOUbP-)">
+  <a href="https://youtu.be/7FWkwuvbBSk?si=pYO2d8YBfAZOUbP-">
     <img src="https://img.shields.io/badge/Watch-Demo_Video-red?style=for-the-badge&logo=youtube"/>
   </a>
-  <a href="Virtual_vahana_round2_techinalReport.pdf">
+  <a href="./Virtual_vahana_round2_techinalReport.pdf">
     <img src="https://img.shields.io/badge/Read-Technical_Report-blue?style=for-the-badge&logo=readthedocs"/>
   </a>
-  <a href="[Explanation Video](https://youtu.be/kqOzSTb72sk)">
-    <img src="https://img.shields.io/badge/Watch-Explanation_Video-purple?style=for-the-badge&logo=google-drive"/>
+  <a href="https://youtu.be/kqOzSTb72sk">
+    <img src="https://img.shields.io/badge/Watch-Explanation_Video-purple?style=for-the-badge&logo=youtube"/>
   </a>
 </p>
 
